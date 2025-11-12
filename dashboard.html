@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Sistema de Tarefas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    xintegrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body class="bg-gray-100 vh-100 font-sans">
+
+  <main class="d-flex flex-nowrap h-100">
+    <div id="side-bar" class="d-flex flex-column flex-shrink-0 p-3 vh-100 shadow-xl" style="width: 280px">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <svg class="bi pe-none me-2" width="40" height="32">
+          <use xlink:href="#bootstrap"></use>
+        </svg>
+        <span class="fs-4 fw-bold mb-3">To-do-List</span>
+      </a>
+      <hr class="border-gray-600" />
+
+      <ul class="d-flex flex-column flex-column mb-auto mt-3 ml-2">
+        <li class="nav-item mt-1">
+          <div class="d-flex flex-row hover:bg-white/10 rounded p-3 gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-plus-icon lucide-plus">
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+            <a href="#" class="nav-link text-white rounded-lg " data-bs-toggle="modal" data-bs-target="#modalTarefa">
+              Adicionar Tarefa
+            </a>
+          </div>
+        </li>
+      </ul>
+      <hr class="border-gray-600" />
+
+      <div id="user-profile" class="mt-2">
+      </div>
+    </div>
+
+    <div class="d-flex flex-column flex-grow-1 overflow-auto">
+
+      <div class="flex-grow-1 p-4">
+
+        <section class="d-flex flex-column rounded-lg bg-white shadow p-4 mb-4">
+
+          <h2 class="mb-4 text-3xl font-bold  text-gray-800">Resumo do Sistema</h2>
+
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 ">
+
+            <div class="col">
+              <div class="card shadow-sm h-100 ">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between ">
+                  <div>
+                    <h3 class="card-title text-4xl font-extrabold" id="totalTarefasDisplay">00</h3>
+                    <p class="mb-0 text-sm font-semibold">Total de Tarefas</p>
+                  </div>
+                </div>
+                <div class="card-footer border  bg-white border-t-0 text-end">
+                  <small class="text-muted">Total de tarefas presentes no sistema</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="card shadow-sm h-100  rounded-lg ">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between ">
+                  <div>
+                    <h3 class="card-title text-4xl font-extrabold" id="totalPendenteDisplay">00</h3>
+                    <p class="mb-0 text-sm  font-semibold">Tarefas Pendentes</p>
+                  </div>
+                </div>
+                <div class="card-footer  border bg-white border-t-0 text-end">
+                  <small class="text-muted">Total de tarefas pendentes no sistema</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="card shadow-sm h-100 rounded-lg  ">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between ">
+                  <div>
+                    <h3 class="card-title text-4xl font-extrabold" id="totalConcluidoDisplay">00</h3>
+                    <p class="mb-0 text-sm font-semibold">Tarefas Concluídas</p>
+                  </div>
+                </div>
+                <div class="card-footer border bg-white border-t-0 text-end">
+                  <small class="text-muted">Total de tarefas concluídas no sistema</small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="p-4 mt-4 bg-white rounded-lg shadow">
+          <h2 class="mb-4 text-2xl font-semibold text-gray-700">Lista Detalhada de Tarefas</h2>
+
+          <div class="row row-cols-1 g-3" id="listarTarefas">
+
+            <div class="col" id="listaTarefas">
+            </div>
+          </div>
+          <div class="modal fade" id="modalTarefa" tabindex="-1" aria-labelledby="modalTarefaLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalTarefaLabel">Criar Nova Tarefa</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="formTarefa">
+                    <div class="mb-3">
+                      <label for="titulo" class="form-label">Título</label>
+                      <input type="text" class="form-control" id="titulo" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="descricao" class="form-label">Descrição</label>
+                      <textarea class="form-control" id="descricao" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="status" class="form-label">Status</label>
+                      <select class="form-select" id="status" required>
+                        <option value="pendente">Pendente</option>
+                        <option value="concluida">Concluída</option>
+                      </select>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                  <button type="button" class="btn btn-primary" id="btnSalvarTarefa">Salvar Tarefa</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="modalEditarTarefa" tabindex="-1" aria-labelledby="modalTarefaLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalTarefaLabel">Editar Tarefa</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="formEditTarefa">
+                    <div class="mb-3">
+                      <label for="tituloEdit" class="form-label">Título</label>
+                      <input type="text" class="form-control" id="tituloEdit">
+                    </div>
+                    <div class="mb-3">
+                      <label for="descricaoEdit" class="form-label">Descrição</label>
+                      <textarea class="form-control" id="descricaoEdit" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="statusEdit" class="form-label">Status</label>
+                      <select class="form-select" id="statusEdit" required>
+                        <option value="pendente">Pendente</option>
+                        <option value="concluida">Concluída</option>
+                      </select>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Fechar</button>
+                  <button type="button" form="formEditTarefa" class="btn btn-primary" onclick="saveEditTask()" id="btnEditarTarefa">Atualizar
+                    Tarefa</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    xintegrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="scripts/operation-dashboard.js" defer></script>
+
+</body>
+
+</html>
